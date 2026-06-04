@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ganap Tewary builds ML systems across FPGA acceleration, vector search, RAG, and hardware-aware AI.">
+    <title>Ganap Tewary | ML Systems Research</title>
+    <link rel="preload" href="/assets/hero-research.png" as="image">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Ganap Tewary home">GT</a>
+      <nav aria-label="Primary navigation">
+        <a href="#research">Research</a>
+        <a href="#publications">Publications</a>
+        <a href="#opportunities">Opportunities</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <img class="hero-media" src="/assets/hero-research.png" alt="AI research workstation with FPGA hardware and vector graph visualization">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="eyebrow"><span id="availability-dot" class="status-dot"></span><span id="availability-text">Open to ML systems work</span></p>
+          <h1 id="hero-title">Ganap Tewary</h1>
+          <p class="hero-copy">ML systems researcher building fast vector search, RAG infrastructure, FPGA acceleration, and hardware-aware AI.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#publications">View research</a>
+            <a class="button secondary" href="#contact">Start a collaboration</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="band intro-band" aria-label="Current status">
+        <div class="section-inner status-grid">
+          <div>
+            <span class="label">Current Focus</span>
+            <strong id="current-focus">FPGA-Accelerated HNSW for sub-us vector search</strong>
+          </div>
+          <div>
+            <span class="label">Thesis Progress</span>
+            <div class="progress-row">
+              <div class="progress" aria-hidden="true"><span id="thesis-bar"></span></div>
+              <strong id="thesis-label">Chapter 2/5</strong>
+            </div>
+          </div>
+          <div>
+            <span class="label">Available From</span>
+            <strong id="available-from">Summer 2026</strong>
+          </div>
+        </div>
+      </section>
+
+      <section id="research" class="section-inner split-section">
+        <div>
+          <span class="label">Research Direction</span>
+          <h2>Systems that make retrieval and inference feel immediate.</h2>
+        </div>
+        <div class="research-list">
+          <article>
+            <h3>Approximate Nearest Neighbor Search</h3>
+            <p>Density-aware quantization, re-ranking, and CPU/SIMD optimization for high-recall vector search.</p>
+          </article>
+          <article>
+            <h3>Hardware-Accelerated ML</h3>
+            <p>FPGA datapaths and accelerator-aware design for ultra-low latency graph traversal and retrieval.</p>
+          </article>
+          <article>
+            <h3>RAG and Knowledge Systems</h3>
+            <p>Graph-aware retrieval, autoscaling, and production-minded infrastructure for reliable LLM workflows.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="publications" class="band">
+        <div class="section-inner">
+          <div class="section-heading">
+            <span class="label">Publications</span>
+            <h2>Active papers and research artifacts.</h2>
+          </div>
+          <div id="publications-list" class="card-grid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="opportunities" class="section-inner split-section">
+        <div>
+          <span class="label">Opportunities</span>
+          <h2 id="opp-headline">Summer 2026 ML Engineering Internship</h2>
+          <p id="opp-note" class="muted">Open to research collaborations in approximate nearest neighbor search and efficient ML systems.</p>
+        </div>
+        <ul id="opp-focus-list" class="focus-list"></ul>
+      </section>
+
+      <section class="band">
+        <div class="section-inner">
+          <div class="section-heading compact">
+            <span class="label">Targets</span>
+            <h2>Conference deadlines.</h2>
+          </div>
+          <div id="deadlines-list" class="deadline-list" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="contact" class="section-inner contact-section">
+        <div>
+          <span class="label">Contact</span>
+          <h2>Bring a concrete research problem, prototype, or collaboration idea.</h2>
+          <p class="muted">The form stores requests in the admin dashboard and can email notifications when Gmail app credentials are configured.</p>
+        </div>
+        <form id="collab-form" class="contact-form">
+          <div class="form-row">
+            <label>Name<input name="name" autocomplete="name" required></label>
+            <label>Email<input name="email" type="email" autocomplete="email" required></label>
+          </div>
+          <div class="form-row">
+            <label>Institution<input name="institution" autocomplete="organization"></label>
+            <label>Type
+              <select name="type">
+                <option value="general">General</option>
+                <option value="joint_paper">Joint Paper</option>
+                <option value="internship">Internship</option>
+                <option value="consult">Consultation</option>
+              </select>
+            </label>
+          </div>
+          <label>Research Area<input name="area" placeholder="Vector search, RAG, FPGA, AutoML"></label>
+          <label>Message<textarea name="message" rows="5" required></textarea></label>
+          <div class="form-actions">
+            <button class="button primary" type="submit">Send request</button>
+            <span id="form-status" role="status"></span>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Ganap Tewary</span>
+      <a href="/admin.html">Admin</a>
+    </footer>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>

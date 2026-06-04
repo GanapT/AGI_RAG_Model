@@ -11,6 +11,7 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const PUBLIC_DIR = require('path').join(__dirname, 'public');
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors({
@@ -27,6 +28,7 @@ app.use(cors({
 }));
 
 app.use(express.json({ limit: '50kb' }));
+app.use(express.static(PUBLIC_DIR));
 
 // ─── Request logger (dev) ─────────────────────────────────────────────────────
 if (process.env.NODE_ENV !== 'production') {
@@ -50,6 +52,10 @@ app.use('/admin',            require('./routes/admin'));
 // ─── Health check ─────────────────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, ts: new Date().toISOString(), env: process.env.NODE_ENV || 'development' });
+});
+
+app.get('/', (_req, res) => {
+  res.sendFile(require('path').join(PUBLIC_DIR, 'index.html'));
 });
 
 // ─── 404 catch-all ────────────────────────────────────────────────────────────

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin | Ganap Tewary</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body class="admin-body">
+    <header class="site-header">
+      <a class="brand" href="/">GT</a>
+      <nav aria-label="Admin navigation">
+        <a href="/">Site</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#requests">Requests</a>
+      </nav>
+    </header>
+    <main class="admin-shell">
+      <span class="label">Admin</span>
+      <h1>Dashboard</h1>
+      <form id="login-form" class="contact-form">
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <div class="form-actions">
+          <button class="button primary" type="submit">Log in</button>
+          <span id="login-status" role="status"></span>
+        </div>
+      </form>
+
+      <div class="admin-grid">
+        <section id="analytics" class="admin-panel">
+          <h2>Analytics</h2>
+          <pre id="analytics-output">Log in to load analytics.</pre>
+        </section>
+        <section id="requests" class="admin-panel">
+          <h2>Collaboration Requests</h2>
+          <pre id="requests-output">Log in to load requests.</pre>
+        </section>
+      </div>
+    </main>
+    <script src="/admin.js" defer></script>
+  </body>
+</html>

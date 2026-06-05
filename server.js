@@ -38,9 +38,6 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-// ─── Init DB ──────────────────────────────────────────────────────────────────
-initDB();
-
 // ─── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/analytics',   require('./routes/analytics'));
 app.use('/api/publications', require('./routes/publications'));
@@ -68,7 +65,14 @@ app.use((err, _req, res, _next) => {
 });
 
 // ─── Start ────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🚀 GT Backend running on port ${PORT}`);
-  console.log(`   Health: http://localhost:${PORT}/api/health\n`);
-});
+initDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`\n🚀 GT Backend running on port ${PORT}`);
+      console.log(`   Health: http://localhost:${PORT}/api/health\n`);
+    });
+  })
+  .catch(err => {
+    console.error('❌ Database initialization failed:', err);
+    process.exit(1);
+  });

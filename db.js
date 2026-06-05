@@ -1,22 +1,126 @@
-const Database = require('better-sqlite3');
+const fs = require('fs');
 const path = require('path');
+const initSqlJs = require('sql.js');
 
 const DB_PATH = process.env.DB_PATH || './gt_data.sqlite';
 let db;
+let SQL;
+
+class SQLJsDatabase {
+  constructor(database, dbPath) {
+    this.database = database;
+    this.dbPath = dbPath;
+  }
+
+  exec(sql) {
+    this.database.exec(sql);
+    this.persist();
+  }
+
+  prepare(sql) {
+    return new SQLJsStatement(this, sql);
+  }
+
+  persist() {
+    if (this.dbPath === ':memory:') return;
+    fs.mkdirSync(path.dirname(this.dbPath), { recursive: true });
+    fs.writeFileSync(this.dbPath, Buffer.from(this.database.export()));
+  }
+}
+
+class SQLJsStatement {
+  constructor(store, sql) {
+    this.store = store;
+    this.sql = sql;
+  }
+
+  get(...params) {
+    const stmt = this.store.database.prepare(this.sql);
+    try {
+      this.bind(stmt, params);
+      return stmt.step() ? stmt.getAsObject() : undefined;
+    } finally {
+      stmt.free();
+    }
+  }
+
+  all(...params) {
+    const stmt = this.store.database.prepare(this.sql);
+    const rows = [];
+    try {
+      this.bind(stmt, params);
+      while (stmt.step()) rows.push(stmt.getAsObject());
+      return rows;
+    } finally {
+      stmt.free();
+    }
+  }
+
+  run(...params) {
+    const stmt = this.store.database.prepare(this.sql);
+    try {
+      this.bind(stmt, params);
+      while (stmt.step()) {}
+      const changes = this.store.database.getRowsModified();
+      const idRows = this.store.database.exec('SELECT last_insert_rowid() as id');
+      const lastInsertRowid = idRows[0]?.values?.[0]?.[0] || 0;
+      this.store.persist();
+      return { changes, lastInsertRowid };
+    } finally {
+      stmt.free();
+    }
+  }
+
+  bind(stmt, params) {
+    if (params.length === 0) return;
+    if (params.length === 1 && params[0] && typeof params[0] === 'object' && !Array.isArray(params[0])) {
+      stmt.bind(this.namedParams(params[0]));
+      return;
+    }
+    stmt.bind(params);
+  }
+
+  namedParams(params) {
+    const normalized = {};
+    for (const [key, value] of Object.entries(params)) {
+      normalized[key] = value;
+      normalized[`@${key}`] = value;
+      normalized[`:${key}`] = value;
+      normalized[`$${key}`] = value;
+    }
+    return normalized;
+  }
+}
+
+async function getSQL() {
+  if (!SQL) {
+    const wasmDir = path.dirname(require.resolve('sql.js/dist/sql-wasm.wasm'));
+    SQL = await initSqlJs({
+      locateFile: file => path.join(wasmDir, file),
+    });
+  }
+  return SQL;
+}
 
 function getDB() {
   if (!db) {
-    db = new Database(path.resolve(DB_PATH));
-    db.pragma('journal_mode = WAL');  // Better concurrent read performance
-    db.pragma('foreign_keys = ON');
+    throw new Error('Database has not been initialized. Call initDB() before handling requests.');
   }
   return db;
 }
 
-function initDB() {
-  const db = getDB();
+async function initDB() {
+  const SQL = await getSQL();
+  const resolvedPath = DB_PATH === ':memory:' ? DB_PATH : path.resolve(DB_PATH);
+  const data = resolvedPath !== ':memory:' && fs.existsSync(resolvedPath)
+    ? fs.readFileSync(resolvedPath)
+    : undefined;
 
-  db.exec(`
+  db = new SQLJsDatabase(new SQL.Database(data), resolvedPath);
+  const store = getDB();
+
+  store.exec('PRAGMA foreign_keys = ON');
+  store.exec(`
     -- ─── Analytics ─────────────────────────────────────────────
     CREATE TABLE IF NOT EXISTS analytics (
       id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -104,7 +208,7 @@ function initDB() {
     ['available_from', 'Summer 2026'],
   ];
 
-  const upsert = db.prepare(`
+  const upsert = store.prepare(`
     INSERT INTO site_status (key, value) VALUES (?, ?)
     ON CONFLICT(key) DO NOTHING
   `);
@@ -122,16 +226,16 @@ function initDB() {
     ])],
     ['note', 'Open to research collaborations in approximate nearest neighbor search and efficient ML systems.'],
   ];
-  const upsertOpp = db.prepare(`
+  const upsertOpp = store.prepare(`
     INSERT INTO opportunities (key, value) VALUES (?, ?)
     ON CONFLICT(key) DO NOTHING
   `);
   oppDefaults.forEach(([k, v]) => upsertOpp.run(k, v));
 
   // Seed publications if table is empty
-  const pubCount = db.prepare('SELECT COUNT(*) as n FROM publications').get();
+  const pubCount = store.prepare('SELECT COUNT(*) as n FROM publications').get();
   if (pubCount.n === 0) {
-    const insertPub = db.prepare(`
+    const insertPub = store.prepare(`
       INSERT INTO publications (title, venue, status, tags, sort_order)
       VALUES (@title, @venue, @status, @tags, @sort_order)
     `);
@@ -168,7 +272,7 @@ function initDB() {
   }
 
   console.log('✅ Database initialized');
-  return db;
+  return store;
 }
 
 module.exports = { getDB, initDB };

@@ -21,6 +21,8 @@ Open:
 
 ## Hostinger Deployment
 
+### Node.js App
+
 1. Connect this GitHub repository in Hostinger.
 2. Set the Node.js app entry point to `server.js`.
 3. Set Node.js to version 18 or newer.
@@ -29,3 +31,15 @@ Open:
 6. Restart the Node.js app.
 
 The app serves the website at `/` and the API at `/api/*`.
+
+### Static GitHub Builder
+
+If Hostinger shows a build screen with framework presets, use:
+
+- Framework preset: `Other`
+- Branch: `main`
+- Node version: `18.x`
+- Build command: `npm run build`
+- Output directory: `dist`
+
+Static builder deployments serve the visible website only. The API, admin dashboard data, analytics storage, and contact form require the Node.js app deployment.

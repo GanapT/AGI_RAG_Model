@@ -23,7 +23,7 @@ Open:
 
 1. Connect this GitHub repository in Hostinger.
 2. Set the Node.js app entry point to `server.js`.
-3. Set Node.js to version 20 or newer.
+3. Set Node.js to version 18 or newer.
 4. Add the environment variables from `.env.example` in Hostinger.
 5. Run `npm install` in the Hostinger terminal if the panel does not install automatically.
 6. Restart the Node.js app.

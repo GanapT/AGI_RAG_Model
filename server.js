@@ -51,19 +51,6 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, ts: new Date().toISOString(), env: process.env.NODE_ENV || 'development' });
 });
 
-// Temporary diagnostic: checks whether this Node process can reach the
-// HISIM Python backend on the same account's localhost:8001. Remove once
-// the /simulator proxy is wired up.
-app.get('/simulator-ping', async (_req, res) => {
-  try {
-    const r = await fetch('http://127.0.0.1:8001/api/health', { signal: AbortSignal.timeout(5000) });
-    const data = await r.json();
-    res.json({ reachable: true, data });
-  } catch (err) {
-    res.status(502).json({ reachable: false, error: err.message });
-  }
-});
-
 app.get('/', (_req, res) => {
   res.sendFile(require('path').join(PUBLIC_DIR, 'index.html'));
 });
